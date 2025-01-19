@@ -228,11 +228,11 @@ export default function StatGenerator() {
   return (
     <div className="w-full font-inter">
       <Card className="bg-white/5 backdrop-blur-lg border-white/10 shadow-2xl">
-        <CardContent className="p-6">
-          <div className="flex flex-col items-center gap-6">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col items-center gap-4 sm:gap-6">
             {/* Team Selection */}
             <motion.div 
-              className="flex gap-6 w-full max-w-2xl justify-center items-center"
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full max-w-2xl justify-center items-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -242,7 +242,7 @@ export default function StatGenerator() {
                 onValueChange={(value: string) => setTeam1(value as TeamKey)}
                 disabled={loading}
               >
-                <SelectTrigger className="w-64 bg-white/5 border-white/10 text-white">
+                <SelectTrigger className="w-full sm:w-64 bg-white/5 border-white/10 text-white">
                   <SelectValue placeholder="Select team" />
                 </SelectTrigger>
                 <SelectContent>
@@ -269,7 +269,7 @@ export default function StatGenerator() {
                 onValueChange={(value: string) => setTeam2(value as TeamKey)}
                 disabled={loading}
               >
-                <SelectTrigger className="w-64 bg-white/5 border-white/10 text-white">
+                <SelectTrigger className="w-full sm:w-64 bg-white/5 border-white/10 text-white">
                   <SelectValue placeholder="Select team" />
                 </SelectTrigger>
                 <SelectContent>
@@ -288,7 +288,7 @@ export default function StatGenerator() {
             </motion.div>
 
             <motion.div
-              className="w-72"
+              className="w-full sm:w-72"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -319,11 +319,12 @@ export default function StatGenerator() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
+              className="w-full sm:w-auto"
             >
               <Button
                 onClick={() => generateStat()}
                 disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8"
               >
                 {loading ? (
                   <>
@@ -339,7 +340,7 @@ export default function StatGenerator() {
             <AnimatePresence>
               {loading && (
                 <motion.div 
-                  className="text-sm text-blue-400"
+                  className="text-sm text-blue-400 text-center"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -353,7 +354,7 @@ export default function StatGenerator() {
           <AnimatePresence mode="wait">
             {stats?.error ? (
               <motion.div 
-                className="mt-8 bg-red-500/10 border border-red-500/20 rounded-xl p-6 text-red-400"
+                className="mt-8 bg-red-500/10 border border-red-500/20 rounded-xl p-4 sm:p-6 text-red-400 text-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -367,11 +368,11 @@ export default function StatGenerator() {
                 exit={{ opacity: 0, y: -20 }}
                 className="mt-8"
               >
-                <div className="grid grid-cols-2 gap-8">
+                <div className="grid grid-cols-2 gap-4 sm:gap-8">
                   {/* Team Headers */}
                   <div className="text-center">
                     <h3 
-                      className="text-2xl font-bold mb-2" 
+                      className="text-xl sm:text-2xl font-bold mb-2" 
                       style={{ color: TEAMS[team1].color }}
                     >
                       {TEAMS[team1].name}
@@ -379,7 +380,7 @@ export default function StatGenerator() {
                   </div>
                   <div className="text-center">
                     <h3 
-                      className="text-2xl font-bold mb-2" 
+                      className="text-xl sm:text-2xl font-bold mb-2" 
                       style={{ color: TEAMS[team2].color }}
                     >
                       {TEAMS[team2].name}
@@ -389,7 +390,7 @@ export default function StatGenerator() {
                   {/* AI Analysis */}
                   {analysisLoading && (
                     <Card className="col-span-2 bg-blue-500/10 border-blue-500/20">
-                      <CardContent className="p-6 flex flex-col items-center gap-4">
+                      <CardContent className="p-4 sm:p-6 flex flex-col items-center gap-4">
                         <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
                         <div className="text-center">
                           <p className="text-lg font-semibold text-blue-400">
@@ -405,8 +406,8 @@ export default function StatGenerator() {
 
                   {analysis && (
                     <Card className="col-span-2 bg-white/5 backdrop-blur-lg border-white/10">
-                      <CardContent className="p-6">
-                        <div className="whitespace-pre-wrap text-gray-300">
+                      <CardContent className="p-4 sm:p-6">
+                        <div className="whitespace-pre-wrap text-gray-300 text-sm sm:text-base">
                           {analysis}
                         </div>
                       </CardContent>
@@ -415,7 +416,7 @@ export default function StatGenerator() {
 
                   {/* Stats Grid */}
                   <div className="col-span-2 mt-8">
-                    <div className="space-y-6">
+                    <div className="space-y-4 sm:space-y-6">
                       {stats.data[team1].map((stat, index) => {
                         const team2Stat = stats.data[team2][index];
                         const comparison = compareStats(stat.value, team2Stat.value);
@@ -424,16 +425,16 @@ export default function StatGenerator() {
                         
                         return (
                           <Card key={`stat-${index}`} className="bg-white/5 backdrop-blur-lg border-white/10">
-                            <CardHeader>
-                              <CardTitle className="text-white">{stat.name}</CardTitle>
-                              <CardDescription className="text-gray-400">
+                            <CardHeader className="p-4 sm:p-6">
+                              <CardTitle className="text-base sm:text-lg text-white">{stat.name}</CardTitle>
+                              <CardDescription className="text-sm text-gray-400">
                                 {stat.description}
                               </CardDescription>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
                               <div className="grid grid-cols-2 gap-4">
                                 <div 
-                                  className={`p-4 rounded-lg relative ${
+                                  className={`p-3 sm:p-4 rounded-lg relative ${
                                     team1Wins ? 'bg-white/10 ring-2' : 'bg-white/5'
                                   }`}
                                   style={{ 
@@ -441,19 +442,19 @@ export default function StatGenerator() {
                                   }}
                                 >
                                   <div 
-                                    className="text-2xl font-bold text-center"
+                                    className="text-lg sm:text-2xl font-bold text-center"
                                     style={{ 
                                       color: team1Wins ? TEAMS[team1].color : 'rgb(156, 163, 175)'
                                     }}
                                   >
                                     {stat.value}
                                     {team1Wins && (
-                                      <ArrowUp className="absolute top-2 right-2 h-4 w-4 text-green-500" />
+                                      <ArrowUp className="absolute top-2 right-2 h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
                                     )}
                                   </div>
                                 </div>
                                 <div 
-                                  className={`p-4 rounded-lg relative ${
+                                  className={`p-3 sm:p-4 rounded-lg relative ${
                                     team2Wins ? 'bg-white/10 ring-2' : 'bg-white/5'
                                   }`}
                                   style={{ 
@@ -461,14 +462,14 @@ export default function StatGenerator() {
                                   }}
                                 >
                                   <div 
-                                    className="text-2xl font-bold text-center"
+                                    className="text-lg sm:text-2xl font-bold text-center"
                                     style={{ 
                                       color: team2Wins ? TEAMS[team2].color : 'rgb(156, 163, 175)'
                                     }}
                                   >
                                     {team2Stat.value}
                                     {team2Wins && (
-                                      <ArrowUp className="absolute top-2 right-2 h-4 w-4 text-green-500" />
+                                      <ArrowUp className="absolute top-2 right-2 h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
                                     )}
                                   </div>
                                 </div>
