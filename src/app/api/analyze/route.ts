@@ -1,6 +1,23 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+interface Stat {
+  name: string;
+  value: string;
+  description: string;
+}
+
+interface ExtractedStats {
+  passingYards: string;
+  rushingYards: string;
+  receivingYards: string;
+  totalPoints: string;
+  totalTouchdowns: string;
+  sacks: string;
+  interceptions: string;
+  forcedFumbles: string;
+}
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -21,7 +38,14 @@ const CATEGORY_DISPLAY_NAMES: { [key: string]: string } = {
 
 export async function POST(request: Request) {
   try {
-    const { category, team1Stats, team2Stats, team1, team2 } = await request.json();
+    const { category, team1Stats, team2Stats, team1, team2 } = await request.json() as {
+      category: string;
+      team1Stats: Stat[];
+      team2Stats: Stat[];
+      team1: string;
+      team2: string;
+    };
+    
     console.log('Received request for category:', category);
     console.log('Stats received:', { team1Stats, team2Stats });
 
@@ -30,7 +54,7 @@ export async function POST(request: Request) {
       const displayCategory = CATEGORY_DISPLAY_NAMES[category] || category;
       
       // Format the stats in a clear, structured way
-      const statsComparison = team1Stats.map((stat: any, index: number) => {
+      const statsComparison = team1Stats.map((stat: Stat, index: number) => {
         return `${stat.name}:
 - ${team1}: ${stat.value}
 - ${team2}: ${team2Stats[index].value}
@@ -57,7 +81,7 @@ IMPORTANT: Use ONLY the statistics provided above. Do not reference any other da
         messages: [{ role: "user", content: prompt }],
         model: "gpt-4",
         temperature: 0.5,
-        max_tokens: 250
+        max_tokens: 1000
       });
 
       console.log('Received OpenAI response:', completion.choices[0].message.content);
@@ -71,26 +95,26 @@ IMPORTANT: Use ONLY the statistics provided above. Do not reference any other da
     console.log('Processing all categories analysis');
     
     // Extract key statistics for easier reference
-    const team1ExtractedStats = {
-      passingYards: team1Stats.find((s: any) => s.name.includes('Passing Yards') || s.name.includes('Net Passing'))?.value || 'N/A',
-      rushingYards: team1Stats.find((s: any) => s.name.includes('Rushing Yards') || s.name.includes('Rush Yards'))?.value || 'N/A',
-      receivingYards: team1Stats.find((s: any) => s.name.includes('Receiving Yards') || s.name.includes('Rec Yards'))?.value || 'N/A',
-      totalPoints: team1Stats.find((s: any) => s.name.includes('Points') || s.name.includes('Total Points'))?.value || 'N/A',
-      totalTouchdowns: team1Stats.find((s: any) => s.name.includes('Touchdowns') || s.name.includes('Total TD'))?.value || 'N/A',
-      sacks: team1Stats.find((s: any) => s.name.includes('Sacks') || s.name.includes('Total Sacks'))?.value || 'N/A',
-      interceptions: team1Stats.find((s: any) => s.name.includes('Interceptions') || s.name.includes('INT'))?.value || 'N/A',
-      forcedFumbles: team1Stats.find((s: any) => s.name.includes('Fumbles Forced') || s.name.includes('Forced Fumbles'))?.value || 'N/A'
+    const team1ExtractedStats: ExtractedStats = {
+      passingYards: team1Stats.find((s: Stat) => s.name.includes('Passing Yards') || s.name.includes('Net Passing'))?.value || 'N/A',
+      rushingYards: team1Stats.find((s: Stat) => s.name.includes('Rushing Yards') || s.name.includes('Rush Yards'))?.value || 'N/A',
+      receivingYards: team1Stats.find((s: Stat) => s.name.includes('Receiving Yards') || s.name.includes('Rec Yards'))?.value || 'N/A',
+      totalPoints: team1Stats.find((s: Stat) => s.name.includes('Points') || s.name.includes('Total Points'))?.value || 'N/A',
+      totalTouchdowns: team1Stats.find((s: Stat) => s.name.includes('Touchdowns') || s.name.includes('Total TD'))?.value || 'N/A',
+      sacks: team1Stats.find((s: Stat) => s.name.includes('Sacks') || s.name.includes('Total Sacks'))?.value || 'N/A',
+      interceptions: team1Stats.find((s: Stat) => s.name.includes('Interceptions') || s.name.includes('INT'))?.value || 'N/A',
+      forcedFumbles: team1Stats.find((s: Stat) => s.name.includes('Fumbles Forced') || s.name.includes('Forced Fumbles'))?.value || 'N/A'
     };
 
-    const team2ExtractedStats = {
-      passingYards: team2Stats.find((s: any) => s.name.includes('Passing Yards') || s.name.includes('Net Passing'))?.value || 'N/A',
-      rushingYards: team2Stats.find((s: any) => s.name.includes('Rushing Yards') || s.name.includes('Rush Yards'))?.value || 'N/A',
-      receivingYards: team2Stats.find((s: any) => s.name.includes('Receiving Yards') || s.name.includes('Rec Yards'))?.value || 'N/A',
-      totalPoints: team2Stats.find((s: any) => s.name.includes('Points') || s.name.includes('Total Points'))?.value || 'N/A',
-      totalTouchdowns: team2Stats.find((s: any) => s.name.includes('Touchdowns') || s.name.includes('Total TD'))?.value || 'N/A',
-      sacks: team2Stats.find((s: any) => s.name.includes('Sacks') || s.name.includes('Total Sacks'))?.value || 'N/A',
-      interceptions: team2Stats.find((s: any) => s.name.includes('Interceptions') || s.name.includes('INT'))?.value || 'N/A',
-      forcedFumbles: team2Stats.find((s: any) => s.name.includes('Fumbles Forced') || s.name.includes('Forced Fumbles'))?.value || 'N/A'
+    const team2ExtractedStats: ExtractedStats = {
+      passingYards: team2Stats.find((s: Stat) => s.name.includes('Passing Yards') || s.name.includes('Net Passing'))?.value || 'N/A',
+      rushingYards: team2Stats.find((s: Stat) => s.name.includes('Rushing Yards') || s.name.includes('Rush Yards'))?.value || 'N/A',
+      receivingYards: team2Stats.find((s: Stat) => s.name.includes('Receiving Yards') || s.name.includes('Rec Yards'))?.value || 'N/A',
+      totalPoints: team2Stats.find((s: Stat) => s.name.includes('Points') || s.name.includes('Total Points'))?.value || 'N/A',
+      totalTouchdowns: team2Stats.find((s: Stat) => s.name.includes('Touchdowns') || s.name.includes('Total TD'))?.value || 'N/A',
+      sacks: team2Stats.find((s: Stat) => s.name.includes('Sacks') || s.name.includes('Total Sacks'))?.value || 'N/A',
+      interceptions: team2Stats.find((s: Stat) => s.name.includes('Interceptions') || s.name.includes('INT'))?.value || 'N/A',
+      forcedFumbles: team2Stats.find((s: Stat) => s.name.includes('Fumbles Forced') || s.name.includes('Forced Fumbles'))?.value || 'N/A'
     };
 
     const statsComparison = `

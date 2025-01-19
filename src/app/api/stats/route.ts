@@ -39,29 +39,6 @@ const options = {
   }
 };
 
-// Function to get random stat type
-function getRandomStatType() {
-  const statTypes = [
-    'passing',
-    'rushing',
-    'receiving',
-    'defense',
-    'scoring'
-  ];
-  return statTypes[Math.floor(Math.random() * statTypes.length)];
-}
-
-function findStatValue(category: any, statName: string) {
-  if (!category?.stats) return null;
-  const stat = category.stats.find((s: any) => s.name === statName);
-  return stat?.value ?? null;
-}
-
-// Helper function to check if all required stats are present
-function areStatsValid(stats: (number | null)[]): boolean {
-  return stats.every(stat => stat !== null && stat !== undefined);
-}
-
 // Helper function to format stat value
 function formatStatValue(displayValue: string, displayName: string) {
   // Handle QB Rating specifically

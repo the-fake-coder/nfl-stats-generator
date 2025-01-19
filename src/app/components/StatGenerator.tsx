@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Trophy, ArrowUp, Loader2 } from 'lucide-react';
 
 interface Stat {
@@ -407,47 +406,9 @@ export default function StatGenerator() {
                   {analysis && (
                     <Card className="col-span-2 bg-white/5 backdrop-blur-lg border-white/10">
                       <CardContent className="p-6">
-                        {analysis.split('\n\n').map((section, index) => {
-                          if (!section.trim()) return null;
-                          
-                          let title, content;
-                          if (section.includes(':')) {
-                            const splitIndex = section.indexOf(':');
-                            title = section.substring(0, splitIndex);
-                            content = section.substring(splitIndex + 1);
-                          } else if (section.includes('\n')) {
-                            const splitIndex = section.indexOf('\n');
-                            title = section.substring(0, splitIndex);
-                            content = section.substring(splitIndex + 1);
-                          } else {
-                            title = section;
-                            content = '';
-                          }
-                          
-                          if (!content?.trim() && !title?.trim()) return null;
-                          
-                          return (
-                            <div key={index} className={index > 0 ? 'mt-6' : ''}>
-                              <h4 className="text-lg font-semibold text-white mb-3">
-                                {title?.trim()}
-                              </h4>
-                              <div className={`space-y-2 ${
-                                title?.includes('Winner') || title?.includes('Prediction')
-                                  ? 'text-green-400 font-medium'
-                                  : 'text-gray-300'
-                              }`}>
-                                {content?.trim().split('\n').map((line, i) => (
-                                  <p key={i} className={line.startsWith('-') ? 'ml-4' : ''}>
-                                    {line.trim()}
-                                  </p>
-                                ))}
-                              </div>
-                              {index < analysis.split('\n\n').length - 1 && (
-                                <Separator className="my-4 bg-white/10" />
-                              )}
-                            </div>
-                          );
-                        })}
+                        <div className="whitespace-pre-wrap text-gray-300">
+                          {analysis}
+                        </div>
                       </CardContent>
                     </Card>
                   )}
